@@ -343,7 +343,7 @@ const UnicornGame = {
     if (!topPos) return;
     const x = topPos.x;
     const y = topPos.y;
-    const s = this.scale * 0.85;
+    const s = this.scale * 1.3;
 
     ctx.save();
 
@@ -413,7 +413,7 @@ const UnicornGame = {
   // DRAW: UNICORN
   // ============================================================
   drawUnicorn(ctx, x, y, scale, emotion, rotation) {
-    const s = scale * 0.7;
+    const s = scale * 1.05;
     ctx.save();
     ctx.translate(x, y);
     if (rotation) ctx.rotate(rotation);
