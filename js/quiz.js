@@ -73,6 +73,22 @@ const quizState = {
   history: [],
 };
 
+// === PERSISTENCE ===
+function saveStats() {
+  FirebaseSync.saveStats(quizState.stats);
+}
+
+async function loadStats() {
+  const saved = await FirebaseSync.loadStats();
+  if (saved) {
+    quizState.stats.attempts = saved.attempts || 0;
+    quizState.stats.correct = saved.correct || 0;
+    quizState.stats.brave = saved.brave || 0;
+    quizState.stats.meterValue = saved.meterValue || 0;
+    quizState.stats.level = saved.level || 1;
+  }
+}
+
 // === DOM REFS ===
 const _q = (sel) => document.querySelector(sel);
 let _card, _input, _goBtn, _encouragement, _animationArea, _particleContainer, _introHint;
@@ -229,6 +245,7 @@ function submitAnswer() {
 
   renderStats();
   checkLevelUp();
+  saveStats();
 }
 
 function isCorrect(user, correct) {
@@ -444,6 +461,7 @@ function checkLevelUp() {
     quizState.stats.meterValue -= 100;
     quizState.stats.level++;
     renderStats();
+    saveStats();
     showLevelUp();
   }
 }
@@ -532,10 +550,11 @@ function initQuizEvents() {
 }
 
 // === INIT ===
-function initQuiz() {
+async function initQuiz() {
   initQuizDOM();
   initQuizEvents();
   initCategoryToggles();
+  await loadStats();
 
   quizState.currentQuestion = generateQuestion();
   if (quizState.currentQuestion) {

@@ -3,17 +3,48 @@
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize quiz
-  initQuiz();
+  FirebaseSync.init();
 
-  // Initialize unicorn canvas
-  const canvas = document.getElementById('unicorn-canvas');
-  UnicornGame.init(canvas);
+  const overlay = document.getElementById('username-overlay');
+  const usernameInput = document.getElementById('username-input');
+  const usernameGo = document.getElementById('username-go');
 
-  // Wire quiz callbacks to unicorn
-  quizCallbacks.onCorrect.push(() => UnicornGame.onCorrectAnswer());
-  quizCallbacks.onWrong.push(() => UnicornGame.onWrongAnswer());
+  // Check if we have a saved username
+  const saved = FirebaseSync.getSavedUsername();
+  if (saved) {
+    usernameInput.value = saved;
+  }
 
-  // Initialize parallax
-  initParallax();
+  function startGame() {
+    const name = usernameInput.value.trim();
+    if (!name) {
+      usernameInput.focus();
+      usernameInput.placeholder = 'Type your name!';
+      return;
+    }
+
+    FirebaseSync.setUsername(name);
+    overlay.classList.add('hidden');
+
+    // Initialize quiz (loads stats from Firebase)
+    initQuiz().then(() => {
+      // Initialize unicorn canvas
+      const canvas = document.getElementById('unicorn-canvas');
+      UnicornGame.init(canvas);
+
+      // Wire quiz callbacks to unicorn
+      quizCallbacks.onCorrect.push(() => UnicornGame.onCorrectAnswer());
+      quizCallbacks.onWrong.push(() => UnicornGame.onWrongAnswer());
+
+      // Initialize parallax
+      initParallax();
+    });
+  }
+
+  usernameGo.addEventListener('click', startGame);
+  usernameInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') startGame();
+  });
+
+  usernameInput.focus();
 });
