@@ -40,7 +40,7 @@ html {
 body {
   font-family: 'Nunito', sans-serif;
   color: var(--text);
-  background: url('../assets/parallax-bg.png') center top / cover no-repeat fixed;
+  background: var(--bg);
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -285,6 +285,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: var(--bg);
 }
 
 .game-layout {
