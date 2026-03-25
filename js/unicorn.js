@@ -274,7 +274,6 @@ const UnicornGame = {
 
     this.drawRainbow(ctx);
     this.drawStepMarkers(ctx);
-    this.drawCollectedItems(ctx, timestamp);
     this.drawIceCream(ctx);
 
     const pos = this.getAnimatedPosition(timestamp);
@@ -421,107 +420,6 @@ const UnicornGame = {
     ctx.restore();
   },
 
-  // ============================================================
-  // DRAW: COLLECTED ITEMS (wand, tiara, scepter)
-  // ============================================================
-  drawCollectedItems(ctx, timestamp) {
-    if (this.playerLevel < 10) return;
-    const s = this.scale * 1.2;
-    const baseX = this.w - 20 * s;
-    const baseY = this.h - 15 * s;
-    const sparkle = Math.sin(timestamp * 0.003) * 0.3 + 0.7;
-
-    // Wand (level 10+)
-    if (this.playerLevel >= 10) {
-      ctx.save();
-      ctx.translate(baseX, baseY);
-      // Stick
-      ctx.strokeStyle = '#C8A87C';
-      ctx.lineWidth = 2.5 * s;
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(0, -22 * s);
-      ctx.stroke();
-      // Star tip
-      ctx.fillStyle = `rgba(255, 215, 0, ${sparkle})`;
-      this.drawStar(ctx, 0, -25 * s, 5, 5 * s, 2.5 * s);
-      ctx.fill();
-      // Glow
-      ctx.fillStyle = `rgba(255, 230, 100, ${sparkle * 0.3})`;
-      ctx.beginPath();
-      ctx.arc(0, -25 * s, 8 * s, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    // Tiara (level 20+)
-    if (this.playerLevel >= 20) {
-      ctx.save();
-      ctx.translate(baseX, baseY - 35 * s);
-      ctx.fillStyle = `rgba(192, 192, 220, ${sparkle})`;
-      ctx.strokeStyle = '#B8B8D0';
-      ctx.lineWidth = 1.5 * s;
-      // Crown base
-      ctx.beginPath();
-      ctx.moveTo(-8 * s, 0);
-      ctx.lineTo(-10 * s, -8 * s);
-      ctx.lineTo(-4 * s, -5 * s);
-      ctx.lineTo(0, -12 * s);
-      ctx.lineTo(4 * s, -5 * s);
-      ctx.lineTo(10 * s, -8 * s);
-      ctx.lineTo(8 * s, 0);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-      // Gem
-      ctx.fillStyle = `rgba(156, 77, 255, ${sparkle})`;
-      ctx.beginPath();
-      ctx.arc(0, -6 * s, 2 * s, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    // Scepter (level 30+)
-    if (this.playerLevel >= 30) {
-      ctx.save();
-      ctx.translate(baseX, baseY - 70 * s);
-      // Staff
-      ctx.strokeStyle = '#DAA520';
-      ctx.lineWidth = 3 * s;
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(0, -24 * s);
-      ctx.stroke();
-      // Orb
-      const orbGrad = ctx.createRadialGradient(0, -27 * s, 0, 0, -27 * s, 6 * s);
-      orbGrad.addColorStop(0, `rgba(255, 215, 0, ${sparkle})`);
-      orbGrad.addColorStop(1, `rgba(200, 100, 255, ${sparkle * 0.8})`);
-      ctx.fillStyle = orbGrad;
-      ctx.beginPath();
-      ctx.arc(0, -27 * s, 6 * s, 0, Math.PI * 2);
-      ctx.fill();
-      // Orb shine
-      ctx.fillStyle = `rgba(255, 255, 255, ${sparkle * 0.5})`;
-      ctx.beginPath();
-      ctx.arc(-2 * s, -29 * s, 2 * s, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-  },
-
-  // Helper: draw a star shape
-  drawStar(ctx, cx, cy, points, outerR, innerR) {
-    ctx.beginPath();
-    for (let i = 0; i < points * 2; i++) {
-      const r = i % 2 === 0 ? outerR : innerR;
-      const angle = (Math.PI / points) * i - Math.PI / 2;
-      const x = cx + Math.cos(angle) * r;
-      const y = cy + Math.sin(angle) * r;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-  },
 
   // ============================================================
   // DRAW: UNICORN
