@@ -10,14 +10,75 @@ const quizCallbacks = {
   onLevelUp: [],
 };
 
-// === DATA ===
-const CONVERSIONS = [
-  { from: 'km', to: 'm',  factor: 1000, category: 'length' },
-  { from: 'm',  to: 'cm', factor: 100,  category: 'length' },
-  { from: 'cm', to: 'mm', factor: 10,   category: 'length' },
-  { from: 'kg', to: 'g',  factor: 1000, category: 'mass' },
-  { from: 'g',  to: 'mg', factor: 1000, category: 'mass' },
-  { from: 'L',  to: 'mL', factor: 1000, category: 'capacity' },
+// === TIERED CONVERSION DATA ===
+const CONVERSION_TIERS = [
+  {
+    minLevel: 1,
+    conversions: [
+      { from: 'km', to: 'm',  factor: 1000, category: 'length' },
+      { from: 'm',  to: 'cm', factor: 100,  category: 'length' },
+      { from: 'cm', to: 'mm', factor: 10,   category: 'length' },
+      { from: 'kg', to: 'g',  factor: 1000, category: 'mass' },
+      { from: 'g',  to: 'mg', factor: 1000, category: 'mass' },
+      { from: 'L',  to: 'mL', factor: 1000, category: 'capacity' },
+    ],
+  },
+  {
+    minLevel: 3,
+    conversions: [
+      { from: 'km', to: 'cm', factor: 100000,  category: 'length' },
+      { from: 'km', to: 'mm', factor: 1000000, category: 'length' },
+      { from: 'm',  to: 'mm', factor: 1000,    category: 'length' },
+      { from: 'kg', to: 'mg', factor: 1000000, category: 'mass' },
+    ],
+  },
+  {
+    minLevel: 6,
+    conversions: [
+      { from: 'm\u00b2',  to: 'cm\u00b2', factor: 10000,   category: 'area', smallOnly: true },
+      { from: 'cm\u00b2', to: 'mm\u00b2', factor: 100,     category: 'area', smallOnly: true },
+      { from: 'km\u00b2', to: 'm\u00b2',  factor: 1000000, category: 'area', smallOnly: true },
+    ],
+  },
+  {
+    minLevel: 10,
+    conversions: [
+      { from: 'km/h', to: 'm/h',   factor: 1000, category: 'rates' },
+      { from: 'km/h', to: 'km/min', factor: 60,   category: 'rates', divideOnly: true },
+      { from: 'm/s',  to: 'km/h',  factor: 3.6,   category: 'rates' },
+      { from: '$',    to: 'cents',  factor: 100,   category: 'money', moneyStyle: true },
+    ],
+  },
+];
+
+// Fraction/decimal/percentage data (levels 20+)
+const FRACTION_DATA = [
+  { fraction: '1/2',   decimal: 0.5,   percent: 50 },
+  { fraction: '1/4',   decimal: 0.25,  percent: 25 },
+  { fraction: '3/4',   decimal: 0.75,  percent: 75 },
+  { fraction: '1/5',   decimal: 0.2,   percent: 20 },
+  { fraction: '2/5',   decimal: 0.4,   percent: 40 },
+  { fraction: '3/5',   decimal: 0.6,   percent: 60 },
+  { fraction: '4/5',   decimal: 0.8,   percent: 80 },
+  { fraction: '1/8',   decimal: 0.125, percent: 12.5 },
+  { fraction: '3/8',   decimal: 0.375, percent: 37.5 },
+  { fraction: '5/8',   decimal: 0.625, percent: 62.5 },
+  { fraction: '7/8',   decimal: 0.875, percent: 87.5 },
+  { fraction: '1/10',  decimal: 0.1,   percent: 10 },
+  { fraction: '3/10',  decimal: 0.3,   percent: 30 },
+  { fraction: '7/10',  decimal: 0.7,   percent: 70 },
+  { fraction: '9/10',  decimal: 0.9,   percent: 90 },
+  { fraction: '1/20',  decimal: 0.05,  percent: 5 },
+  { fraction: '3/20',  decimal: 0.15,  percent: 15 },
+  { fraction: '1/25',  decimal: 0.04,  percent: 4 },
+  { fraction: '1/100', decimal: 0.01,  percent: 1 },
+];
+
+const FRACTION_DIRECTIONS = [
+  { from: 'fraction', to: 'decimal' },
+  { from: 'fraction', to: 'percent' },
+  { from: 'decimal',  to: 'percent' },
+  { from: 'percent',  to: 'decimal' },
 ];
 
 const UNIT_LADDERS = {
@@ -41,6 +102,15 @@ const UNIT_LADDERS = {
     { unit: 'L', label: 'L' },
     { from: 'L', to: 'mL', label: '\u00d71000' },
     { unit: 'mL', label: 'mL' },
+  ],
+  area: [
+    { unit: 'km\u00b2', label: 'km\u00b2' },
+    { from: 'km\u00b2', to: 'm\u00b2', label: '\u00d71,000,000' },
+    { unit: 'm\u00b2', label: 'm\u00b2' },
+    { from: 'm\u00b2', to: 'cm\u00b2', label: '\u00d710,000' },
+    { unit: 'cm\u00b2', label: 'cm\u00b2' },
+    { from: 'cm\u00b2', to: 'mm\u00b2', label: '\u00d7100' },
+    { unit: 'mm\u00b2', label: 'mm\u00b2' },
   ],
 };
 
@@ -108,20 +178,83 @@ function initQuizDOM() {
 }
 
 // === QUESTION GENERATION ===
-function generateQuestion() {
-  const pool = CONVERSIONS.filter(c => quizState.activeCategories.has(c.category));
-  if (pool.length === 0) return null;
+function getAvailableConversions() {
+  const level = quizState.stats.level;
+  const pool = [];
+  let newestTierMin = 1;
 
+  for (const tier of CONVERSION_TIERS) {
+    if (level >= tier.minLevel) {
+      const filtered = tier.conversions.filter(c => quizState.activeCategories.has(c.category));
+      pool.push(...filtered);
+      if (tier.minLevel > newestTierMin && filtered.length > 0) {
+        newestTierMin = tier.minLevel;
+      }
+    }
+  }
+
+  return { pool, newestTierMin };
+}
+
+function generateQuestion() {
+  const level = quizState.stats.level;
+
+  // Levels 20+: 40% chance of fraction question if numbers category active
+  if (level >= 20 && quizState.activeCategories.has('numbers') && Math.random() < 0.4) {
+    return generateFractionQuestion();
+  }
+
+  const { pool, newestTierMin } = getAvailableConversions();
+  if (pool.length === 0) {
+    // Fallback: try fraction question if available
+    if (level >= 20 && quizState.activeCategories.has('numbers')) {
+      return generateFractionQuestion();
+    }
+    return null;
+  }
+
+  // Weight newer conversions higher (~40% newest tier, 60% all others)
   let conv;
   let tries = 0;
   do {
-    conv = pool[Math.floor(Math.random() * pool.length)];
+    if (newestTierMin > 1 && Math.random() < 0.4) {
+      const newestPool = pool.filter(c => {
+        const tier = CONVERSION_TIERS.find(t => t.conversions.includes(c));
+        return tier && tier.minLevel === newestTierMin;
+      });
+      if (newestPool.length > 0) {
+        conv = newestPool[Math.floor(Math.random() * newestPool.length)];
+      } else {
+        conv = pool[Math.floor(Math.random() * pool.length)];
+      }
+    } else {
+      conv = pool[Math.floor(Math.random() * pool.length)];
+    }
     tries++;
   } while (tries < 20 && isRecentRepeat(conv));
 
-  const direction = Math.random() < 0.5 ? 'multiply' : 'divide';
+  // Pick direction
+  let direction;
+  if (conv.divideOnly) {
+    direction = 'divide';
+  } else {
+    direction = Math.random() < 0.5 ? 'multiply' : 'divide';
+  }
+
+  // Pick value
   let value;
-  if (direction === 'multiply') {
+  if (conv.smallOnly) {
+    value = Math.floor(Math.random() * 5) + 1;
+    if (direction === 'divide') {
+      value = value * conv.factor;
+    }
+  } else if (conv.moneyStyle) {
+    value = pickMoneyValue(direction, conv.factor);
+  } else if (conv.factor === 3.6) {
+    value = pickRateValue36(direction);
+  } else if (conv.factor === 60) {
+    value = pickRate60Value(direction);
+  } else if (direction === 'multiply') {
     value = pickMultiplyValue(conv.factor);
   } else {
     value = pickDivideValue(conv.factor);
@@ -132,6 +265,7 @@ function generateQuestion() {
     : roundSafe(value / conv.factor);
 
   const question = {
+    type: 'conversion',
     value,
     fromUnit: direction === 'multiply' ? conv.from : conv.to,
     toUnit: direction === 'multiply' ? conv.to : conv.from,
@@ -146,6 +280,53 @@ function generateQuestion() {
   if (quizState.history.length > 3) quizState.history.shift();
 
   return question;
+}
+
+function generateFractionQuestion() {
+  const data = FRACTION_DATA[Math.floor(Math.random() * FRACTION_DATA.length)];
+  const dir = FRACTION_DIRECTIONS[Math.floor(Math.random() * FRACTION_DIRECTIONS.length)];
+
+  let displayValue, fromUnit, toUnit, correctAnswer, answerIsFraction;
+
+  if (dir.from === 'fraction' && dir.to === 'decimal') {
+    displayValue = data.fraction;
+    fromUnit = '';
+    toUnit = '';
+    correctAnswer = data.decimal;
+    answerIsFraction = false;
+  } else if (dir.from === 'fraction' && dir.to === 'percent') {
+    displayValue = data.fraction;
+    fromUnit = '';
+    toUnit = '%';
+    correctAnswer = data.percent;
+    answerIsFraction = false;
+  } else if (dir.from === 'decimal' && dir.to === 'percent') {
+    displayValue = formatNumber(data.decimal);
+    fromUnit = '';
+    toUnit = '%';
+    correctAnswer = data.percent;
+    answerIsFraction = false;
+  } else if (dir.from === 'percent' && dir.to === 'decimal') {
+    displayValue = formatNumber(data.percent);
+    fromUnit = '%';
+    toUnit = '';
+    correctAnswer = data.decimal;
+    answerIsFraction = false;
+  }
+
+  return {
+    type: 'fraction',
+    value: displayValue,
+    fromUnit,
+    toUnit,
+    correctAnswer,
+    answerIsFraction,
+    fractionAnswer: data.fraction,
+    category: 'numbers',
+    convKey: 'frac' + dir.from + dir.to,
+    direction: dir.from + '->' + dir.to,
+    conversionFactor: null,
+  };
 }
 
 function isRecentRepeat(conv) {
@@ -176,17 +357,50 @@ function pickDivideValue(factor) {
   }
 }
 
+function pickMoneyValue(direction, factor) {
+  // Realistic dollar amounts
+  const dollars = [0.5, 1, 1.25, 1.50, 1.75, 2, 2.50, 3, 3.50, 4.25, 5, 7.50, 10, 10.20, 15, 20];
+  if (direction === 'multiply') {
+    return dollars[Math.floor(Math.random() * dollars.length)];
+  } else {
+    return dollars[Math.floor(Math.random() * dollars.length)] * factor;
+  }
+}
+
+function pickRateValue36(direction) {
+  // m/s ↔ km/h — pick values that give clean results with factor 3.6
+  if (direction === 'multiply') {
+    // m/s values: multiples of 5 give clean km/h (5 m/s = 18 km/h)
+    return [5, 10, 15, 20, 25, 30, 50, 100][Math.floor(Math.random() * 8)];
+  } else {
+    // km/h values that divide cleanly by 3.6
+    return [18, 36, 54, 72, 90, 108, 180, 360][Math.floor(Math.random() * 8)];
+  }
+}
+
+function pickRate60Value(direction) {
+  // km/h ↔ km/min — divide by 60
+  if (direction === 'divide') {
+    // km/h values that divide cleanly by 60
+    return [60, 120, 180, 240, 300, 360, 420, 480, 540, 600][Math.floor(Math.random() * 10)];
+  } else {
+    return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10][Math.floor(Math.random() * 10)];
+  }
+}
+
 function roundSafe(n) {
   return Math.round(n * 10000) / 10000;
 }
 
 // === RENDERING ===
 function renderQuestion(q) {
-  _q('#q-value').textContent = formatNumber(q.value);
+  _q('#q-value').textContent = q.type === 'conversion' ? formatNumber(q.value) : q.value;
   _q('#q-from-unit').textContent = q.fromUnit;
   _q('#q-to-unit').textContent = q.toUnit;
   _input.value = '';
   _input.placeholder = '?';
+  // Use text input for fraction questions so mobile keyboard has "/"
+  _input.inputMode = (q.type === 'fraction' && q.answerIsFraction) ? 'text' : 'decimal';
   focusInput();
 }
 
@@ -212,6 +426,22 @@ function pulseStat(id) {
   el.classList.add('pulse');
 }
 
+// === CATEGORY BUTTONS — show/hide based on level ===
+function updateCategoryButtons() {
+  const level = quizState.stats.level;
+  const show = (cat) => {
+    const btn = document.querySelector(`[data-cat="${cat}"]`);
+    if (btn && btn.style.display === 'none') {
+      btn.style.display = '';
+      quizState.activeCategories.add(cat);
+      btn.classList.add('active');
+    }
+  };
+  if (level >= 6) show('area');
+  if (level >= 10) { show('rates'); show('money'); }
+  if (level >= 20) show('numbers');
+}
+
 // === ANSWER HANDLING ===
 function submitAnswer() {
   if (quizState.phase !== 'asking') return;
@@ -219,7 +449,24 @@ function submitAnswer() {
   const raw = _input.value.trim();
   if (raw === '') return;
 
-  const userAnswer = parseFloat(raw);
+  const q = quizState.currentQuestion;
+
+  // Parse answer — support fraction input like "3/4"
+  let userAnswer;
+  if (raw.includes('/')) {
+    const parts = raw.split('/');
+    if (parts.length === 2) {
+      const num = parseFloat(parts[0]);
+      const den = parseFloat(parts[1]);
+      if (!isNaN(num) && !isNaN(den) && den !== 0) {
+        userAnswer = num / den;
+      }
+    }
+  }
+  if (userAnswer === undefined) {
+    userAnswer = parseFloat(raw);
+  }
+
   if (isNaN(userAnswer)) {
     _input.value = '';
     _input.placeholder = 'number!';
@@ -236,7 +483,6 @@ function submitAnswer() {
   quizState.stats.attempts++;
   pulseStat('#stat-attempts');
 
-  const q = quizState.currentQuestion;
   if (isCorrect(userAnswer, q.correctAnswer)) {
     quizState.stats.correct++;
     quizState.stats.meterValue += 5;
@@ -303,8 +549,13 @@ function showWrongFeedback(q, userAnswer) {
   _goBtn.disabled = true;
 
   _animationArea.innerHTML = '';
-  showDecimalSlider(q);
-  showUnitLadder(q);
+
+  if (q.type === 'conversion' && q.conversionFactor) {
+    showDecimalSlider(q);
+    showUnitLadder(q);
+  } else if (q.type === 'fraction') {
+    showFractionHelp(q);
+  }
 
   setTimeout(() => {
     const btn = document.createElement('button');
@@ -319,6 +570,18 @@ function showWrongFeedback(q, userAnswer) {
     _animationArea.appendChild(btn);
     btn.focus();
   }, 2200);
+}
+
+// === FRACTION HELP (wrong answer feedback) ===
+function showFractionHelp(q) {
+  const display = document.createElement('div');
+  display.className = 'result-display';
+  display.style.animationDelay = '0.5s';
+
+  let text = q.value + ' ' + q.fromUnit + ' = ' + formatNumber(q.correctAnswer) + ' ' + q.toUnit;
+  display.textContent = text.trim();
+
+  _animationArea.appendChild(display);
 }
 
 // === ADVANCE ===
@@ -391,6 +654,7 @@ function showDecimalSlider(q) {
   section.className = 'decimal-slider-section';
 
   const places = Math.round(Math.log10(q.conversionFactor));
+  if (isNaN(places) || places <= 0) return; // skip for non-power-of-10 factors
   const isMultiply = q.direction === 'multiply';
 
   const label = document.createElement('div');
@@ -498,6 +762,7 @@ function checkLevelUp() {
     quizState.stats.level++;
     renderStats();
     saveStats();
+    updateCategoryButtons();
     showLevelUp();
     quizCallbacks.onLevelUp.forEach(fn => fn(quizState.stats.level));
   }
@@ -602,6 +867,7 @@ async function initQuiz() {
   initQuizEvents();
   initCategoryToggles();
   await loadStats();
+  updateCategoryButtons();
 
   quizState.currentQuestion = generateQuestion();
   if (quizState.currentQuestion) {
