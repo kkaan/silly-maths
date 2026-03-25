@@ -32,10 +32,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const canvas = document.getElementById('unicorn-canvas');
       UnicornGame.init(canvas);
 
+      // Sync unicorn with current level (for collected items display)
+      UnicornGame.setLevel(quizState.stats.level);
+
       // Wire quiz callbacks
       quizCallbacks.onCorrect.push(() => UnicornGame.onCorrectAnswer());
       quizCallbacks.onSkittle.push((count) => showSkittleFanfare(count));
-      quizCallbacks.onLevelUp.push(() => UnicornGame.onLevelUp());
+      quizCallbacks.onLevelUp.push((level) => {
+        UnicornGame.onLevelUp();
+        UnicornGame.setLevel(level);
+      });
 
       // Initialize parallax
       initParallax();

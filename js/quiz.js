@@ -757,14 +757,39 @@ function showUnitLadder(q) {
 }
 
 // === LEVEL UP ===
+const MILESTONES = {
+  10: { emoji: '\u{1FA84}', tier: 'wand',    title: 'Fairy Apprentice!',    message: 'You earned the magic wand! You may now practice fairy magic!', duration: 3000, confetti: 40 },
+  20: { emoji: '\u{1F451}', tier: 'tiara',   title: 'Fairy Princess!',      message: 'All the unicorns love you! Even Fluffy bows in admiration!', duration: 3500, confetti: 45 },
+  30: { emoji: '\u{1F3C6}', tier: 'scepter', title: 'Sovereign Princess\nof all the Lands!', message: "Fluffy celebrates with an all-you-can-eat ice cream buffet!", duration: 4000, confetti: 50 },
+};
+
+const TEASERS = {
+  5:  '\u{1FA84} 5 levels to go! A magic wand awaits...',
+  8:  '\u{1FA84} Just 2 more levels until you can practice fairy magic!',
+  11: '\u{1F451} 9 levels to princess status! A tiara and the love of all unicorns await...',
+  21: '\u{1F3C6} 9 levels until you ascend to the throne and claim the royal scepter!',
+};
+
 function checkLevelUp() {
   if (quizState.stats.correct > 0 && quizState.stats.correct % 20 === 0) {
     quizState.stats.level++;
     renderStats();
     saveStats();
     updateCategoryButtons();
-    showLevelUp();
-    quizCallbacks.onLevelUp.forEach(fn => fn(quizState.stats.level));
+
+    const level = quizState.stats.level;
+    if (MILESTONES[level]) {
+      showMilestoneOverlay(level);
+    } else {
+      showLevelUp();
+    }
+    quizCallbacks.onLevelUp.forEach(fn => fn(level));
+
+    // Show teaser after overlay dismisses
+    if (TEASERS[level]) {
+      const delay = MILESTONES[level] ? MILESTONES[level].duration + 500 : 2300;
+      setTimeout(() => showMilestoneTeaser(level), delay);
+    }
   }
 }
 
@@ -793,26 +818,75 @@ function showLevelUp() {
   overlay.appendChild(fluffy);
   overlay.appendChild(num);
 
-  const confettiColors = ['#FFB6C1', '#D8B4FE', '#A7F3D0', '#FDE68A', '#FF85A2', '#FECACA'];
-  for (let i = 0; i < 30; i++) {
-    const c = document.createElement('div');
-    c.className = 'level-up-confetti';
-    c.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
-    c.style.left = Math.random() * 100 + '%';
-    c.style.top = '-20px';
-    c.style.setProperty('--fall-distance', (200 + Math.random() * 400) + 'px');
-    c.style.setProperty('--rotation', (360 + Math.random() * 720) + 'deg');
-    c.style.animationDuration = (1 + Math.random() * 1.5) + 's';
-    c.style.animationDelay = (Math.random() * 0.5) + 's';
-    overlay.appendChild(c);
-  }
-
+  addConfetti(overlay, 30);
   document.body.appendChild(overlay);
 
   setTimeout(() => {
     overlay.style.animation = 'overlay-in 0.3s ease reverse';
     setTimeout(() => overlay.remove(), 300);
   }, 1800);
+}
+
+function showMilestoneOverlay(level) {
+  const m = MILESTONES[level];
+  const overlay = document.createElement('div');
+  overlay.className = 'milestone-overlay tier-' + m.tier;
+
+  const item = document.createElement('div');
+  item.className = 'milestone-item';
+  item.textContent = m.emoji;
+
+  const title = document.createElement('div');
+  title.className = 'milestone-title';
+  title.textContent = m.title;
+
+  const msg = document.createElement('div');
+  msg.className = 'milestone-message';
+  msg.textContent = m.message;
+
+  const num = document.createElement('div');
+  num.className = 'milestone-level';
+  num.textContent = 'Level ' + level;
+
+  overlay.appendChild(item);
+  overlay.appendChild(title);
+  overlay.appendChild(msg);
+  overlay.appendChild(num);
+
+  addConfetti(overlay, m.confetti);
+  document.body.appendChild(overlay);
+
+  setTimeout(() => {
+    overlay.style.animation = 'overlay-in 0.4s ease reverse';
+    setTimeout(() => overlay.remove(), 400);
+  }, m.duration);
+}
+
+function showMilestoneTeaser(level) {
+  const text = TEASERS[level];
+  if (!text) return;
+  _encouragement.innerHTML = '<span class="milestone-teaser">' + text + '</span>';
+  setTimeout(() => {
+    if (_encouragement.querySelector('.milestone-teaser')) {
+      _encouragement.innerHTML = '';
+    }
+  }, 4200);
+}
+
+function addConfetti(container, count) {
+  const colors = ['#FFB6C1', '#D8B4FE', '#A7F3D0', '#FDE68A', '#FF85A2', '#FECACA', '#FFD700', '#88C8F7'];
+  for (let i = 0; i < count; i++) {
+    const c = document.createElement('div');
+    c.className = 'level-up-confetti';
+    c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    c.style.left = Math.random() * 100 + '%';
+    c.style.top = '-20px';
+    c.style.setProperty('--fall-distance', (200 + Math.random() * 400) + 'px');
+    c.style.setProperty('--rotation', (360 + Math.random() * 720) + 'deg');
+    c.style.animationDuration = (1 + Math.random() * 1.5) + 's';
+    c.style.animationDelay = (Math.random() * 0.5) + 's';
+    container.appendChild(c);
+  }
 }
 
 // === CATEGORY TOGGLES ===
