@@ -440,6 +440,17 @@ function updateCategoryButtons() {
   if (level >= 6) show('area');
   if (level >= 10) { show('rates'); show('money'); }
   if (level >= 20) show('numbers');
+
+  // Show earned milestone items
+  const earnedContainer = _q('#earned-items');
+  if (earnedContainer) {
+    if (level >= 10) {
+      earnedContainer.style.display = '';
+      _q('#earned-wand').style.display = '';
+    }
+    if (level >= 20) _q('#earned-tiara').style.display = '';
+    if (level >= 30) _q('#earned-scepter').style.display = '';
+  }
 }
 
 // === ANSWER HANDLING ===

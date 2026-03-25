@@ -426,9 +426,9 @@ const UnicornGame = {
   // ============================================================
   drawCollectedItems(ctx, timestamp) {
     if (this.playerLevel < 10) return;
-    const s = this.scale * 0.7;
-    const baseX = this.curveP0.x + 5 * s;
-    const baseY = this.h - 18 * s;
+    const s = this.scale * 1.2;
+    const baseX = this.w - 20 * s;
+    const baseY = this.h - 15 * s;
     const sparkle = Math.sin(timestamp * 0.003) * 0.3 + 0.7;
 
     // Wand (level 10+)
@@ -457,7 +457,7 @@ const UnicornGame = {
     // Tiara (level 20+)
     if (this.playerLevel >= 20) {
       ctx.save();
-      ctx.translate(baseX + 22 * s, baseY);
+      ctx.translate(baseX, baseY - 35 * s);
       ctx.fillStyle = `rgba(192, 192, 220, ${sparkle})`;
       ctx.strokeStyle = '#B8B8D0';
       ctx.lineWidth = 1.5 * s;
@@ -484,7 +484,7 @@ const UnicornGame = {
     // Scepter (level 30+)
     if (this.playerLevel >= 30) {
       ctx.save();
-      ctx.translate(baseX + 44 * s, baseY);
+      ctx.translate(baseX, baseY - 70 * s);
       // Staff
       ctx.strokeStyle = '#DAA520';
       ctx.lineWidth = 3 * s;
