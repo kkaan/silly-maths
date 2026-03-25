@@ -770,13 +770,6 @@ const MILESTONES = {
   30: { emoji: '\u{1F3C6}', tier: 'scepter', title: 'Sovereign Princess\nof all the Lands!', message: "Fluffy celebrates with an all-you-can-eat ice cream buffet!", duration: 4000, confetti: 50 },
 };
 
-const TEASERS = {
-  5:  '\u{1FA84} 5 levels to go! A magic wand awaits...',
-  8:  '\u{1FA84} Just 2 more levels until you can practice fairy magic!',
-  11: '\u{1F451} 9 levels to princess status! A tiara and the love of all unicorns await...',
-  21: '\u{1F3C6} 9 levels until you ascend to the throne and claim the royal scepter!',
-};
-
 function checkLevelUp() {
   if (quizState.stats.correct > 0 && quizState.stats.correct % 20 === 0) {
     quizState.stats.level++;
@@ -792,10 +785,10 @@ function checkLevelUp() {
     }
     quizCallbacks.onLevelUp.forEach(fn => fn(level));
 
-    // Show teaser after overlay dismisses
-    if (TEASERS[level]) {
+    // Show story beat after overlay dismisses
+    if (typeof showStoryBeat === 'function' && STORY_BEATS && STORY_BEATS[level]) {
       const delay = MILESTONES[level] ? MILESTONES[level].duration + 500 : 2300;
-      setTimeout(() => showMilestoneTeaser(level), delay);
+      setTimeout(() => showStoryBeat(level), delay);
     }
   }
 }
@@ -869,16 +862,6 @@ function showMilestoneOverlay(level) {
   }, m.duration);
 }
 
-function showMilestoneTeaser(level) {
-  const text = TEASERS[level];
-  if (!text) return;
-  _encouragement.innerHTML = '<span class="milestone-teaser">' + text + '</span>';
-  setTimeout(() => {
-    if (_encouragement.querySelector('.milestone-teaser')) {
-      _encouragement.innerHTML = '';
-    }
-  }, 4200);
-}
 
 function addConfetti(container, count) {
   const colors = ['#FFB6C1', '#D8B4FE', '#A7F3D0', '#FDE68A', '#FF85A2', '#FECACA', '#FFD700', '#88C8F7'];
@@ -955,4 +938,11 @@ async function initQuiz() {
     renderQuestion(quizState.currentQuestion);
   }
   renderStats();
+
+  // Show intro story for new players
+  if (quizState.stats.level === 1 && quizState.stats.attempts === 0) {
+    if (typeof showStoryBeat === 'function') {
+      setTimeout(() => showStoryBeat(1), 500);
+    }
+  }
 }
