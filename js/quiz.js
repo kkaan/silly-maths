@@ -44,7 +44,7 @@ const CONVERSION_TIERS = [
     minLevel: 10,
     conversions: [
       { from: 'km/h', to: 'm/h',   factor: 1000, category: 'rates' },
-      { from: 'km/h', to: 'km/min', factor: 60,   category: 'rates', divideOnly: true },
+      { from: 'km/min', to: 'km/h', factor: 60,   category: 'rates' },
       { from: 'm/s',  to: 'km/h',  factor: 3.6,   category: 'rates' },
       { from: '$',    to: 'cents',  factor: 100,   category: 'money', moneyStyle: true },
     ],
@@ -234,12 +234,7 @@ function generateQuestion() {
   } while (tries < 20 && isRecentRepeat(conv));
 
   // Pick direction
-  let direction;
-  if (conv.divideOnly) {
-    direction = 'divide';
-  } else {
-    direction = Math.random() < 0.5 ? 'multiply' : 'divide';
-  }
+  const direction = Math.random() < 0.5 ? 'multiply' : 'divide';
 
   // Pick value
   let value;
@@ -379,12 +374,13 @@ function pickRateValue36(direction) {
 }
 
 function pickRate60Value(direction) {
-  // km/h ↔ km/min — divide by 60
-  if (direction === 'divide') {
+  // km/min ↔ km/h — factor 60
+  if (direction === 'multiply') {
+    // km/min values: small numbers × 60 = clean km/h
+    return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10][Math.floor(Math.random() * 10)];
+  } else {
     // km/h values that divide cleanly by 60
     return [60, 120, 180, 240, 300, 360, 420, 480, 540, 600][Math.floor(Math.random() * 10)];
-  } else {
-    return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10][Math.floor(Math.random() * 10)];
   }
 }
 
