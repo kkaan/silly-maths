@@ -829,6 +829,60 @@ body {
   100% { transform: translateY(var(--fall-distance)) rotate(var(--rotation)); opacity: 0; }
 }
 
+/* Level-up enhancements — Fluffy + ice cream */
+.level-up-icecream {
+  font-size: 3.5rem;
+  line-height: 1;
+  animation: icecream-spin 1.5s ease;
+}
+
+@keyframes icecream-spin {
+  0%   { opacity: 0; transform: scale(0) rotate(-30deg); }
+  40%  { opacity: 1; transform: scale(1.2) rotate(10deg); }
+  60%  { transform: scale(0.95) rotate(-5deg); }
+  80%  { transform: scale(1.05) rotate(2deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.level-up-fluffy {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 6px;
+  animation: bounce-in 0.5s ease 0.25s both;
+}
+
+/* ============================================================
+   SKITTLE FANFARE
+   ============================================================ */
+
+.skittle-fanfare {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FF4136, #FF851B, #FFDC00, #2ECC40, #B10DC9);
+  color: white;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.1rem;
+  padding: 8px 20px;
+  border-radius: 50px;
+  box-shadow: 0 4px 16px rgba(255, 107, 107, 0.4);
+  z-index: 10;
+  animation: skittle-pop 1.8s ease forwards;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@keyframes skittle-pop {
+  0%   { opacity: 0; transform: translateX(-50%) scale(0.3) translateY(10px); }
+  15%  { opacity: 1; transform: translateX(-50%) scale(1.15) translateY(-8px); }
+  30%  { transform: translateX(-50%) scale(1) translateY(0); }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) scale(0.9) translateY(-20px); }
+}
+
 /* ============================================================
    USERNAME OVERLAY
    ============================================================ */

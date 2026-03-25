@@ -6,6 +6,8 @@
 const quizCallbacks = {
   onCorrect: [],
   onWrong: [],
+  onSkittle: [],
+  onLevelUp: [],
 };
 
 // === DATA ===
@@ -68,6 +70,7 @@ const quizState = {
     brave: 0,
     meterValue: 0,
     level: 1,
+    skittles: 0,
   },
   activeCategories: new Set(['length', 'mass', 'capacity']),
   history: [],
@@ -86,6 +89,7 @@ async function loadStats() {
     quizState.stats.brave = saved.brave || 0;
     quizState.stats.meterValue = saved.meterValue || 0;
     quizState.stats.level = saved.level || 1;
+    quizState.stats.skittles = saved.skittles || 0;
   }
 }
 
@@ -195,8 +199,10 @@ function renderStats() {
   _q('#attempts-count').textContent = quizState.stats.attempts;
   _q('#brave-count').textContent = quizState.stats.brave;
   _q('#correct-count').textContent = quizState.stats.correct;
-  _q('#meter-fill').style.width = quizState.stats.meterValue + '%';
+  _q('#meter-fill').style.width = Math.min((quizState.stats.meterValue / 30) * 100, 100) + '%';
   _q('#level-badge').textContent = 'Lv ' + quizState.stats.level;
+  const skittleEl = _q('#skittle-count');
+  if (skittleEl) skittleEl.textContent = quizState.stats.skittles;
 }
 
 function pulseStat(id) {
@@ -235,12 +241,20 @@ function submitAnswer() {
     quizState.stats.correct++;
     quizState.stats.meterValue += 5;
     pulseStat('#stat-correct');
-    showCorrectFeedback();
+    showCorrectFeedback(quizState.stats.correct % 2 === 0);
   } else {
     quizState.stats.brave++;
     quizState.stats.meterValue += 3;
     pulseStat('#stat-brave');
     showWrongFeedback(q, userAnswer);
+  }
+
+  // Skittle check (points-based: every 30 points)
+  if (quizState.stats.meterValue >= 30) {
+    quizState.stats.meterValue -= 30;
+    quizState.stats.skittles++;
+    pulseStat('#stat-skittles');
+    quizCallbacks.onSkittle.forEach(fn => fn(quizState.stats.skittles));
   }
 
   renderStats();
@@ -253,12 +267,14 @@ function isCorrect(user, correct) {
 }
 
 // === FEEDBACK: CORRECT ===
-function showCorrectFeedback() {
+function showCorrectFeedback(triggerUnicornHop) {
   quizState.phase = 'feedback-correct';
   _card.classList.add('correct');
 
-  // Fire external callbacks
-  quizCallbacks.onCorrect.forEach(fn => fn());
+  // Fire unicorn hop only every 2 correct answers (10 hops per 20 correct = 1 level)
+  if (triggerUnicornHop) {
+    quizCallbacks.onCorrect.forEach(fn => fn());
+  }
 
   const msg = CORRECT_MESSAGES[Math.floor(Math.random() * CORRECT_MESSAGES.length)];
   _encouragement.innerHTML = `<span class="encouragement-text correct-msg">${msg}</span>`;
@@ -279,9 +295,6 @@ function showCorrectFeedback() {
 function showWrongFeedback(q, userAnswer) {
   quizState.phase = 'feedback-wrong';
   _card.classList.add('wrong');
-
-  // Fire external callbacks
-  quizCallbacks.onWrong.forEach(fn => fn());
 
   const msg = WRONG_MESSAGES[Math.floor(Math.random() * WRONG_MESSAGES.length)];
   _encouragement.innerHTML = `<span class="encouragement-text wrong-msg">${msg}</span>`;
@@ -346,6 +359,30 @@ function createParticleBurst() {
     _particleContainer.appendChild(particle);
     particle.addEventListener('animationend', () => particle.remove());
   }
+}
+
+// === SKITTLE FANFARE ===
+function showSkittleFanfare(count) {
+  const badge = document.createElement('div');
+  badge.className = 'skittle-fanfare';
+  badge.innerHTML = '\u{1F36C} Skittle! x' + count;
+  _card.appendChild(badge);
+
+  // Rainbow particle burst
+  const skittleColors = ['#FF4136', '#FF851B', '#FFDC00', '#2ECC40', '#B10DC9'];
+  for (let i = 0; i < 16; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    const angle = (2 * Math.PI / 16) * i + (Math.random() - 0.5) * 0.5;
+    const distance = 60 + Math.random() * 50;
+    particle.style.setProperty('--dx', Math.cos(angle) * distance + 'px');
+    particle.style.setProperty('--dy', Math.sin(angle) * distance + 'px');
+    particle.style.backgroundColor = skittleColors[i % skittleColors.length];
+    _particleContainer.appendChild(particle);
+    particle.addEventListener('animationend', () => particle.remove());
+  }
+
+  setTimeout(() => badge.remove(), 1800);
 }
 
 // === DECIMAL SLIDER ANIMATION ===
@@ -457,12 +494,12 @@ function showUnitLadder(q) {
 
 // === LEVEL UP ===
 function checkLevelUp() {
-  if (quizState.stats.meterValue >= 100) {
-    quizState.stats.meterValue -= 100;
+  if (quizState.stats.correct > 0 && quizState.stats.correct % 20 === 0) {
     quizState.stats.level++;
     renderStats();
     saveStats();
     showLevelUp();
+    quizCallbacks.onLevelUp.forEach(fn => fn(quizState.stats.level));
   }
 }
 
@@ -470,15 +507,25 @@ function showLevelUp() {
   const overlay = document.createElement('div');
   overlay.className = 'level-up-overlay';
 
+  const iceCream = document.createElement('div');
+  iceCream.className = 'level-up-icecream';
+  iceCream.textContent = '\u{1F366}';
+
   const text = document.createElement('div');
   text.className = 'level-up-text';
   text.textContent = 'LEVEL UP!';
+
+  const fluffy = document.createElement('div');
+  fluffy.className = 'level-up-fluffy';
+  fluffy.textContent = 'Fluffy got the ice cream!';
 
   const num = document.createElement('div');
   num.className = 'level-up-number';
   num.textContent = 'Level ' + quizState.stats.level;
 
+  overlay.appendChild(iceCream);
   overlay.appendChild(text);
+  overlay.appendChild(fluffy);
   overlay.appendChild(num);
 
   const confettiColors = ['#FFB6C1', '#D8B4FE', '#A7F3D0', '#FDE68A', '#FF85A2', '#FECACA'];

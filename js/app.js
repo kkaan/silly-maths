@@ -32,9 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const canvas = document.getElementById('unicorn-canvas');
       UnicornGame.init(canvas);
 
-      // Wire quiz callbacks to unicorn
+      // Wire quiz callbacks
       quizCallbacks.onCorrect.push(() => UnicornGame.onCorrectAnswer());
-      quizCallbacks.onWrong.push(() => UnicornGame.onWrongAnswer());
+      quizCallbacks.onSkittle.push((count) => showSkittleFanfare(count));
+      quizCallbacks.onLevelUp.push(() => UnicornGame.onLevelUp());
 
       // Initialize parallax
       initParallax();

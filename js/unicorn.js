@@ -103,12 +103,18 @@ const UnicornGame = {
   },
 
   onWrongAnswer() {
-    if (this.animationState !== 'idle') return;
+    // Unicorn stays put on wrong answers — no sliding back
+  },
+
+  onLevelUp() {
+    // Force unicorn to the top for ice cream celebration
     this.animFromStep = this.currentStep;
-    this.targetStep = Math.max(this.currentStep - 1, 0);
-    this.animationState = 'sliding';
-    this.emotion = 'sad';
+    this.currentStep = this.TOTAL_STEPS;
+    this.targetStep = this.TOTAL_STEPS;
+    this.animationState = 'celebrating';
+    this.emotion = 'happy';
     this.animStartTime = performance.now();
+    this.addSparkles(15);
   },
 
   // ============================================================
