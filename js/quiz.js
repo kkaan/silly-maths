@@ -859,6 +859,12 @@ function showLevelUp() {
   num.textContent = 'Level ' + quizState.stats.level;
 
   overlay.appendChild(iceCream);
+  if (typeof FluffySprites !== 'undefined' && FluffySprites.ready) {
+    var sprite = FluffySprites.createHappySprite('celebrating', 80, 80);
+    sprite.className = 'fluffy-sprite';
+    sprite.style.animation = 'bounce-in 0.5s ease 0.1s both';
+    overlay.appendChild(sprite);
+  }
   overlay.appendChild(text);
   overlay.appendChild(fluffy);
   overlay.appendChild(num);
@@ -894,6 +900,12 @@ function showMilestoneOverlay(level) {
   num.textContent = 'Level ' + level;
 
   overlay.appendChild(item);
+  if (typeof FluffySprites !== 'undefined' && FluffySprites.ready) {
+    var sprite = FluffySprites.createHappySprite('celebrating', 80, 80);
+    sprite.className = 'fluffy-sprite';
+    sprite.style.animation = 'bounce-in 0.6s ease 0.4s both';
+    overlay.appendChild(sprite);
+  }
   overlay.appendChild(title);
   overlay.appendChild(msg);
   overlay.appendChild(num);
@@ -949,6 +961,12 @@ function showFlavourPicker(onDone, showEncouragement) {
 
   const panel = document.createElement('div');
   panel.className = 'flavour-panel';
+
+  var fluffyPortrait;
+  if (typeof FluffySprites !== 'undefined' && FluffySprites.ready) {
+    fluffyPortrait = FluffySprites.createHappySprite('standing', 64, 64);
+    fluffyPortrait.className = 'fluffy-sprite flavour-fluffy-sprite';
+  }
 
   const emoji = document.createElement('div');
   emoji.className = 'flavour-emoji';
@@ -1008,6 +1026,7 @@ function showFlavourPicker(onDone, showEncouragement) {
     grid.appendChild(btn);
   });
 
+  if (fluffyPortrait) panel.appendChild(fluffyPortrait);
   panel.appendChild(emoji);
   panel.appendChild(heading);
   panel.appendChild(grid);

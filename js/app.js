@@ -26,8 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
     FirebaseSync.setUsername(name);
     overlay.classList.add('hidden');
 
-    // Initialize quiz (loads stats from Firebase)
+    // Initialize quiz (loads stats from Firebase), then preload sprites
     initQuiz().then(() => {
+      return FluffySprites.preload();
+    }).then(() => {
       // Initialize unicorn canvas
       const canvas = document.getElementById('unicorn-canvas');
       UnicornGame.init(canvas);
