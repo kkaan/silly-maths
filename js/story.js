@@ -72,7 +72,7 @@ const STORY_BEATS = {
       { char: 'fluffy', text: 'The fairies were trying to plant a rose bush on a tiny square no bigger than a book. The rose bush kept falling over. It was very sad. The rose bush was crying. I was crying. Everyone was crying.' },
       { char: 'narrator', text: '{PLAYER} taught the gardeners about area conversions. Flowers bloomed. The kingdom was beautiful again.' },
       { char: 'elder', text: 'This child may one day be more than an apprentice. Keep an eye on them. A TIARA might be in their future\u2026' },
-      { char: 'fluffy', text: 'Did somebody say tiara?! I want a tiara! Do they come in "hungry unicorn" size?' },
+      { char: 'fluffy', text: 'Did somebody say tiara?! I want a tiara! Do they come in unicorn size?' },
     ],
   },
   14: {
@@ -166,6 +166,85 @@ const STORY_BEATS = {
   },
 };
 
+// === MID-LEVEL BEATS — Fluffy's Philosophy of Maths ===
+// Triggered halfway through each level (at 10 correct into a level)
+const MID_LEVEL_BEATS = {
+  2: { title: "Fluffy's First Question", lines: [
+    { char: 'fluffy', text: '{PLAYER}, if I eat zero skittles\u2026 did I still eat? Like, is zero a real number or is it just\u2026 nothing pretending to be something?' },
+    { char: 'narrator', text: 'This was the first sign that Fluffy was not an ordinary unicorn.' },
+  ]},
+  4: { title: 'Fluffy Discovers Infinity', lines: [
+    { char: 'fluffy', text: 'If I could eat infinite skittles, would I ever feel full? Or would I just be infinitely hungry AND infinitely eating? {PLAYER}, I\'m scared.' },
+    { char: 'narrator', text: '{PLAYER} wisely chose not to answer.' },
+  ]},
+  6: { title: 'Fluffy Questions Reality', lines: [
+    { char: 'fluffy', text: 'Is a square metre a real thing you can touch, or is it just an IDEA? Like, can I stand on a square metre? Can I eat on a square metre? These are important questions.' },
+    { char: 'narrator', text: 'The answer to all three was yes.' },
+  ]},
+  7: { title: 'Fluffy on Negative Numbers', lines: [
+    { char: 'fluffy', text: 'If I have 3 skittles and I eat 5, do I have negative 2 skittles? Does that mean I OWE someone skittles? I don\'t like this. Maths is getting personal.' },
+    { char: 'narrator', text: 'Fluffy briefly considered a career change before remembering she was a unicorn.' },
+  ]},
+  9: { title: "Fluffy's Decimal Crisis", lines: [
+    { char: 'fluffy', text: 'Is 0.999999 forever the same as 1? Because if it IS, I have been doing maths wrong my entire life. If it ISN\'T, then what\'s in the gap?! WHAT LIVES IN THE GAP, {PLAYER}?!' },
+    { char: 'narrator', text: 'Mathematicians have argued about this for centuries. Fluffy resolved it by eating a biscuit.' },
+  ]},
+  12: { title: 'Fluffy on Measurement', lines: [
+    { char: 'fluffy', text: 'Who decided a metre was a metre? Like, one day someone just PICKED a length and everyone agreed? What if they\'d picked a longer metre? Would I be shorter?' },
+    { char: 'narrator', text: 'Fluffy would be the same size. But she worried about it for the rest of the day.' },
+  ]},
+  13: { title: 'Fluffy on Pi', lines: [
+    { char: 'fluffy', text: 'I heard there\'s a number called Pi that goes on FOREVER and never repeats. That\'s like a skittle flavour you can never finish tasting. Actually that sounds AMAZING.' },
+    { char: 'narrator', text: 'Fluffy spent the next hour trying to taste Pi. She ate a pie instead. Close enough.' },
+  ]},
+  15: { title: 'Fluffy on Speed', lines: [
+    { char: 'fluffy', text: 'If I run at 20 km/h for zero hours, I\'ve gone nowhere. But I was still RUNNING. Does effort count if distance doesn\'t? This is basically philosophy, {PLAYER}.' },
+    { char: 'narrator', text: 'It was, in fact, basically philosophy.' },
+  ]},
+  16: { title: 'Fluffy on Money', lines: [
+    { char: 'fluffy', text: 'Money is just numbers we all AGREE are real, right? So if everyone agreed skittles were money, I\'d be RICH. I\'d also be broke immediately because I\'d eat all my money.' },
+    { char: 'narrator', text: 'This is actually not far from how some economists think.' },
+  ]},
+  18: { title: 'Fluffy on Patterns', lines: [
+    { char: 'fluffy', text: 'Why does maths work? Like, why do numbers DESCRIBE things? The universe didn\'t HAVE to be mathsy. It could have been all vibes and feelings. But no. It chose MATHS.' },
+    { char: 'narrator', text: 'This is called the Unreasonable Effectiveness of Mathematics. Fluffy discovered it between her second and third ice cream.' },
+  ]},
+  19: { title: "Fluffy's Pre-Tiara Thought", lines: [
+    { char: 'fluffy', text: 'If I become exactly 50% more royal when you get the tiara, and I was already 100% fabulous, does that make me 150% fabulous? Can you be more than 100% of something?!' },
+    { char: 'narrator', text: 'In Fluffy\'s case, yes. Absolutely yes.' },
+  ]},
+  22: { title: 'Fluffy on Fractions', lines: [
+    { char: 'fluffy', text: 'If I cut a skittle in half, are there two skittles now? Or two HALF-skittles? At what point does a piece of skittle stop being a skittle? This keeps me up at night, {PLAYER}.' },
+    { char: 'narrator', text: 'This is known as the Ship of Theseus problem. But with skittles.' },
+  ]},
+  23: { title: 'Fluffy on Percentages', lines: [
+    { char: 'fluffy', text: 'If I give 110%, where does the extra 10% come from?! Am I borrowing it from tomorrow? Is future Fluffy going to be missing 10% of herself?! I need to lie down.' },
+    { char: 'narrator', text: 'Fluffy lay down. Then she ate a skittle. Then she felt better.' },
+  ]},
+  25: { title: 'Fluffy on Symmetry', lines: [
+    { char: 'fluffy', text: 'My horn is symmetrical. A rainbow is symmetrical. Skittles are round, which is ALL the symmetries. Is that why they\'re perfect? Is symmetry the same as deliciousness?' },
+    { char: 'narrator', text: 'Science has not yet confirmed this theory. But it hasn\'t denied it either.' },
+  ]},
+  26: { title: 'Fluffy on Coincidence', lines: [
+    { char: 'fluffy', text: '{PLAYER}, what are the CHANCES that you fell through a portal into a kingdom that needed maths, and I happened to be here, and I happened to be hungry? Is anything random, or is it all just maths we haven\'t figured out yet?' },
+    { char: 'narrator', text: 'Fluffy accidentally invented determinism. She then forgot about it and ate a biscuit.' },
+  ]},
+  28: { title: 'Fluffy on Proof', lines: [
+    { char: 'fluffy', text: 'How do you KNOW that 1 + 1 = 2? Like really REALLY know? Has anyone checked? What if it\'s been wrong this whole time and we\'ve all just been too polite to say?' },
+    { char: 'narrator', text: 'A mathematician named Bertrand Russell once spent 360 pages proving that 1 + 1 = 2. Fluffy felt validated.' },
+  ]},
+  29: { title: "Fluffy's Final Wonder", lines: [
+    { char: 'fluffy', text: '{PLAYER}, when you finish all the maths\u2026 will there be more maths? Or does maths end? If it ends, what\'s after it? If it doesn\'t end, then we\'ll need more skittles.' },
+    { char: 'narrator', text: 'Maths does not end. And neither does Fluffy\'s appetite.' },
+  ]},
+};
+
+function showMidLevelBeat(level) {
+  const beat = MID_LEVEL_BEATS[level];
+  if (!beat) return;
+  showStoryBeatFromData(beat);
+}
+
 // Character display config
 const CHAR_CONFIG = {
   narrator: { label: '', className: 'story-narrator' },
@@ -177,7 +256,10 @@ const CHAR_CONFIG = {
 function showStoryBeat(level) {
   const beat = STORY_BEATS[level];
   if (!beat) return;
+  showStoryBeatFromData(beat);
+}
 
+function showStoryBeatFromData(beat) {
   const playerName = FirebaseSync.getSavedUsername() || 'Hero';
 
   // Create overlay

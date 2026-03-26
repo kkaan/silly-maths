@@ -510,6 +510,11 @@ function submitAnswer() {
     quizCallbacks.onSkittle.forEach(fn => fn(quizState.stats.skittles));
   }
 
+  // Mid-level philosophy beat (halfway through a level, not on level-up)
+  if (quizState.stats.correct % 20 === 10 && typeof showMidLevelBeat === 'function') {
+    setTimeout(() => showMidLevelBeat(quizState.stats.level), 1000);
+  }
+
   renderStats();
   checkLevelUp();
   saveStats();
