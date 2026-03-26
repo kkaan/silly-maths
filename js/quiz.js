@@ -555,10 +555,10 @@ function submitAnswer() {
         { char: 'narrator', text: 'BREAKING NEWS from the Mathlandia Gazette: It is Aarani\'s 10th birthday!' },
         { char: 'fluffy', text: 'TEN?! That\'s DOUBLE DIGITS! That\'s basically a GROWN-UP! I made you a cake, {PLAYER}!' },
         { char: 'narrator', text: 'Fluffy presented a magnificent gluten-free birthday cake, decorated with rainbow frosting and exactly 10 candles.' },
-        { char: 'fluffy', text: 'I baked it myself! It\'s gluten-free because I ate all the gluten. Separately. As a snack.' },
+        { char: 'fluffy', text: 'I made sure it was gluten-free because you\'re my favourite human and I want you to enjoy EVERY bite. I taste-tested it THREE times just to be safe.' },
         { char: 'narrator', text: '{PLAYER} closed her eyes and made a wish. When she opened them, the cake was noticeably smaller.' },
-        { char: 'fluffy', text: 'I was just... quality testing. HAPPY BIRTHDAY! \u{1F389}' },
-        { char: 'narrator', text: 'Fluffy had eaten seven of the ten slices. She showed no remorse. She never does.' },
+        { char: 'fluffy', text: 'I was just... quality testing. For YOU. Because I CARE. HAPPY BIRTHDAY! \u{1F389}' },
+        { char: 'narrator', text: 'Fluffy had eaten seven of the ten slices. But she left the three best ones for {PLAYER}. That\'s love.' },
       ],
     }), 1000);
   }
