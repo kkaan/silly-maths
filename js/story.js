@@ -248,7 +248,7 @@ function showMidLevelBeat(level) {
 // Character display config
 const CHAR_CONFIG = {
   narrator: { label: '', className: 'story-narrator' },
-  fluffy:   { label: 'Fluffy', className: 'story-fluffy', hasPortrait: true },
+  fluffy:   { label: '\u{1F984} Fluffy', className: 'story-fluffy' },
   elder:    { label: '\u2728 Council Elder', className: 'story-elder' },
   baker:    { label: '\u{1F9C1} Baker', className: 'story-other' },
 };
@@ -287,18 +287,7 @@ function showStoryBeatFromData(beat) {
     const text = line.text.replace(/\{PLAYER\}/g, playerName);
 
     if (config.label) {
-      var nameSpan = document.createElement('span');
-      nameSpan.className = 'story-char-name';
-
-      if (config.hasPortrait && typeof FluffySprites !== 'undefined' && FluffySprites.ready) {
-        var portrait = FluffySprites.createGrumpySprite('portrait', 32, 32);
-        portrait.className = 'story-fluffy-portrait';
-        nameSpan.appendChild(portrait);
-      }
-
-      nameSpan.appendChild(document.createTextNode(config.label + ':'));
-      p.appendChild(nameSpan);
-      p.appendChild(document.createTextNode(' ' + text));
+      p.innerHTML = '<span class="story-char-name">' + config.label + ':</span> ' + text;
     } else {
       p.textContent = text;
     }
