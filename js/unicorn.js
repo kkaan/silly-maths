@@ -207,7 +207,7 @@ const UnicornGame = {
     var cx = this.w / 2;
     var cy = this.h / 2 + offset.dy;
 
-    this.drawUnicorn(ctx, cx, cy, this.scale, this.emotion);
+    this.drawUnicorn(ctx, cx, cy, this.scale, this.emotion, timestamp);
 
     this.updateSparkles();
     this.drawSparkles(ctx);
@@ -216,181 +216,38 @@ const UnicornGame = {
   },
 
   // ============================================================
-  // DRAW: UNICORN (compact version for progress bar)
+  // DRAW: UNICORN (sprite-based)
   // ============================================================
-  drawUnicorn(ctx, x, y, scale, emotion) {
-    var s = scale * 0.85;
-    ctx.save();
-    ctx.translate(x, y);
+  drawUnicorn(ctx, x, y, scale, emotion, timestamp) {
+    if (!FluffySprites.ready) return;
 
-    // --- Body (white ellipse) ---
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.ellipse(0, 0, 12 * s, 8 * s, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#F0C8D8';
-    ctx.lineWidth = 0.8 * s;
-    ctx.stroke();
+    var img, frame;
 
-    // --- Legs (4 tiny stubs) ---
-    var legs = [
-      { lx: -6, ly: 6 },
-      { lx: -2, ly: 7 },
-      { lx: 2,  ly: 7 },
-      { lx: 6,  ly: 6 },
-    ];
-    legs.forEach(function(leg) {
-      ctx.fillStyle = '#FFFFFF';
-      ctx.strokeStyle = '#F0C8D8';
-      ctx.lineWidth = 0.5 * s;
-      ctx.beginPath();
-      ctx.rect(leg.lx * s - 1.5 * s, leg.ly * s, 3 * s, 5 * s);
-      ctx.fill();
-      ctx.stroke();
-      // Hoof
-      ctx.fillStyle = '#E8B4D8';
-      ctx.beginPath();
-      ctx.rect(leg.lx * s - 1.6 * s, leg.ly * s + 4 * s, 3.2 * s, 1.8 * s);
-      ctx.fill();
-    });
-
-    // --- Neck ---
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.ellipse(7 * s, -3 * s, 5 * s, 6 * s, -0.3, 0, Math.PI * 2);
-    ctx.fill();
-
-    // --- Head ---
-    var headX = 10 * s;
-    var headY = -7 * s;
-
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.arc(headX, headY, 6.5 * s, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#F0C8D8';
-    ctx.lineWidth = 0.8 * s;
-    ctx.stroke();
-
-    // --- Ear ---
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.ellipse(headX + 3 * s, headY - 5.5 * s, 1.8 * s, 3 * s, 0.3, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#F0C8D8';
-    ctx.lineWidth = 0.5 * s;
-    ctx.stroke();
-    ctx.fillStyle = '#FFD1DC';
-    ctx.beginPath();
-    ctx.ellipse(headX + 3 * s, headY - 5 * s, 1 * s, 1.8 * s, 0.3, 0, Math.PI * 2);
-    ctx.fill();
-
-    // --- Horn ---
-    var hornGrad = ctx.createLinearGradient(headX, headY - 6 * s, headX, headY - 15 * s);
-    hornGrad.addColorStop(0, '#FDE68A');
-    hornGrad.addColorStop(1, '#FFC857');
-    ctx.fillStyle = hornGrad;
-    ctx.beginPath();
-    ctx.moveTo(headX - 1.8 * s, headY - 5.5 * s);
-    ctx.lineTo(headX + 1.8 * s, headY - 5.5 * s);
-    ctx.lineTo(headX + 0.2 * s, headY - 14 * s);
-    ctx.closePath();
-    ctx.fill();
-
-    // Horn stripes
-    ctx.strokeStyle = '#F5A623';
-    ctx.lineWidth = 0.5 * s;
-    for (var i = 1; i <= 3; i++) {
-      var t = i / 4;
-      var hy = headY - 5.5 * s - t * 8.5 * s;
-      var hw = 1.8 * s * (1 - t) + 0.2 * s;
-      ctx.beginPath();
-      ctx.moveTo(headX - hw, hy);
-      ctx.lineTo(headX + hw, hy - 0.8 * s);
-      ctx.stroke();
-    }
-
-    // --- Mane ---
-    var maneColors = ['#FFB6C1', '#D8B4FE', '#88C8F7', '#A7F3D0', '#FDE68A'];
-    maneColors.forEach(function(color, i) {
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.4 * s;
-      ctx.beginPath();
-      var mx = headX - 4 * s + i * 0.3 * s;
-      var my = headY - 1 * s + i * 2.5 * s;
-      ctx.moveTo(mx, my);
-      ctx.quadraticCurveTo(mx - 6 * s, my + 1.5 * s, mx - 3 * s, my + 4 * s);
-      ctx.stroke();
-    });
-
-    // --- Tail ---
-    var tailColors = ['#FFB6C1', '#D8B4FE', '#FDE68A', '#A7F3D0'];
-    tailColors.forEach(function(color, i) {
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.2 * s;
-      ctx.beginPath();
-      ctx.moveTo(-12 * s, -1 * s + i * 1.5 * s);
-      ctx.quadraticCurveTo(
-        -18 * s - i * 0.5 * s, -8 * s + i * 1 * s,
-        -15 * s - i * 0.3 * s, -12 * s + i * 1.5 * s
-      );
-      ctx.stroke();
-    });
-
-    // --- Eyes ---
     if (emotion === 'happy') {
-      ctx.strokeStyle = '#4A4A4A';
-      ctx.lineWidth = 0.9 * s;
-      ctx.beginPath();
-      ctx.arc(headX - 2.5 * s, headY - 0.5 * s, 1.4 * s, Math.PI * 1.1, Math.PI * 1.9);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(headX + 2.5 * s, headY - 0.5 * s, 1.4 * s, Math.PI * 1.1, Math.PI * 1.9);
-      ctx.stroke();
+      if (this.animationState === 'celebrating') {
+        var idx = Math.floor(timestamp / 250) % 2;
+        frame = idx === 0 ? FluffySprites.happy.jumping : FluffySprites.happy.celebrating;
+      } else if (this.animationState === 'hopping') {
+        frame = FluffySprites.happy.jumping;
+      } else {
+        frame = FluffySprites.happy.standing;
+      }
+      img = FluffySprites.happyImg;
     } else {
-      ctx.fillStyle = '#4A4A4A';
-      ctx.beginPath();
-      ctx.arc(headX - 2.5 * s, headY - 0.5 * s, 1.2 * s, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(headX + 2.5 * s, headY - 0.5 * s, 1.2 * s, 0, Math.PI * 2);
-      ctx.fill();
-      // Shine
-      ctx.fillStyle = '#FFFFFF';
-      ctx.beginPath();
-      ctx.arc(headX - 2 * s, headY - 1 * s, 0.5 * s, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(headX + 3 * s, headY - 1 * s, 0.5 * s, 0, Math.PI * 2);
-      ctx.fill();
+      if (this.animationState === 'idle') {
+        var idleFrames = FluffySprites.grumpy.idle;
+        var idx = Math.floor(timestamp / 250) % idleFrames.length;
+        frame = idleFrames[idx];
+      } else {
+        frame = FluffySprites.grumpy.standing;
+      }
+      img = FluffySprites.grumpyImg;
     }
 
-    // --- Mouth ---
-    if (emotion === 'happy') {
-      ctx.strokeStyle = '#FF85A2';
-      ctx.lineWidth = 0.8 * s;
-      ctx.beginPath();
-      ctx.arc(headX, headY + 2.5 * s, 2 * s, 0.15 * Math.PI, 0.85 * Math.PI);
-      ctx.stroke();
-    } else {
-      ctx.strokeStyle = '#DDAABB';
-      ctx.lineWidth = 0.6 * s;
-      ctx.beginPath();
-      ctx.moveTo(headX - 1 * s, headY + 2.5 * s);
-      ctx.lineTo(headX + 1 * s, headY + 2.5 * s);
-      ctx.stroke();
-    }
-
-    // --- Cheek blush ---
-    ctx.fillStyle = 'rgba(255, 182, 193, 0.3)';
-    ctx.beginPath();
-    ctx.ellipse(headX - 4 * s, headY + 1.5 * s, 1.5 * s, 0.9 * s, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(headX + 5 * s, headY + 1.5 * s, 1.5 * s, 0.9 * s, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.restore();
+    // Fit sprite into canvas, centered at (x, y)
+    var fitH = 50;
+    var fitW = fitH * (frame.w / frame.h);
+    FluffySprites.drawFrame(ctx, img, frame, x - fitW / 2, y - fitH / 2, fitW, fitH);
   },
 
   // ============================================================
