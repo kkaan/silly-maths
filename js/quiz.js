@@ -785,11 +785,15 @@ function checkLevelUp() {
     }
     quizCallbacks.onLevelUp.forEach(fn => fn(level));
 
-    // Show story beat after overlay dismisses
-    if (typeof showStoryBeat === 'function' && STORY_BEATS && STORY_BEATS[level]) {
-      const delay = MILESTONES[level] ? MILESTONES[level].duration + 500 : 2300;
-      setTimeout(() => showStoryBeat(level), delay);
-    }
+    // Chain: overlay → flavour picker → story beat
+    const overlayDelay = MILESTONES[level] ? MILESTONES[level].duration + 500 : 2300;
+    setTimeout(() => {
+      showFlavourPicker(() => {
+        if (typeof showStoryBeat === 'function' && STORY_BEATS && STORY_BEATS[level]) {
+          showStoryBeat(level);
+        }
+      });
+    }, overlayDelay);
   }
 }
 
@@ -877,6 +881,72 @@ function addConfetti(container, count) {
     c.style.animationDelay = (Math.random() * 0.5) + 's';
     container.appendChild(c);
   }
+}
+
+// === FLAVOUR PICKER ===
+const ICE_CREAM_FLAVOURS = [
+  { name: 'Salted Caramel', color: '#D4A76A' },
+  { name: 'Fairy Floss',    color: '#FFB6D9' },
+  { name: 'Chocolate',      color: '#8B5E3C' },
+  { name: 'Passionfruit Sorbet', color: '#FFD166' },
+  { name: 'Vanilla',        color: '#FFF5E1' },
+  { name: 'Chocolate Mint', color: '#98D4BB' },
+  { name: 'Dulce de Leche', color: '#C8956C' },
+];
+
+function showFlavourPicker(onDone) {
+  const overlay = document.createElement('div');
+  overlay.className = 'flavour-overlay';
+
+  const panel = document.createElement('div');
+  panel.className = 'flavour-panel';
+
+  const emoji = document.createElement('div');
+  emoji.className = 'flavour-emoji';
+  emoji.textContent = '\u{1F366}';
+
+  const heading = document.createElement('div');
+  heading.className = 'flavour-heading';
+  heading.textContent = 'Fluffy wants to share! Pick a flavour:';
+
+  const grid = document.createElement('div');
+  grid.className = 'flavour-grid';
+
+  ICE_CREAM_FLAVOURS.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'flavour-btn';
+    btn.textContent = f.name;
+    btn.style.backgroundColor = f.color;
+    // Dark text for light colours, white for dark
+    const brightness = parseInt(f.color.slice(1, 3), 16) * 0.299 +
+                       parseInt(f.color.slice(3, 5), 16) * 0.587 +
+                       parseInt(f.color.slice(5, 7), 16) * 0.114;
+    btn.style.color = brightness > 150 ? '#4A4A4A' : '#FFFFFF';
+
+    btn.addEventListener('click', () => {
+      grid.querySelectorAll('.flavour-btn').forEach(b => b.disabled = true);
+      btn.classList.add('flavour-selected');
+
+      heading.innerHTML = '\u{1F984} Fluffy LOVED the ' + f.name + '!';
+      heading.classList.add('flavour-result');
+
+      setTimeout(() => {
+        overlay.style.animation = 'overlay-in 0.3s ease reverse';
+        setTimeout(() => {
+          overlay.remove();
+          if (onDone) onDone();
+        }, 300);
+      }, 1200);
+    });
+
+    grid.appendChild(btn);
+  });
+
+  panel.appendChild(emoji);
+  panel.appendChild(heading);
+  panel.appendChild(grid);
+  overlay.appendChild(panel);
+  document.body.appendChild(overlay);
 }
 
 // === CATEGORY TOGGLES ===
