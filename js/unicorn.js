@@ -234,13 +234,7 @@ const UnicornGame = {
       }
       img = FluffySprites.happyImg;
     } else {
-      if (this.animationState === 'idle') {
-        var idleFrames = FluffySprites.grumpy.idle;
-        var idx = Math.floor(timestamp / 250) % idleFrames.length;
-        frame = idleFrames[idx];
-      } else {
-        frame = FluffySprites.grumpy.standing;
-      }
+      frame = FluffySprites.grumpy.standing;
       img = FluffySprites.grumpyImg;
     }
 
