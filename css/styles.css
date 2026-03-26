@@ -362,40 +362,79 @@ body {
   100% { transform: scale(1); }
 }
 
-/* Learning meter */
-.learning-meter-wrap {
+/* Rainbow progress bar */
+.rainbow-bar-wrap {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: var(--card-bg);
-  padding: 7px 13px;
-  border-radius: 50px;
-  box-shadow: 0 2px 8px rgba(255, 150, 180, 0.15);
-  font-size: 0.82rem;
-  font-weight: 700;
-  min-width: 150px;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 14px;
 }
 
-.meter-track {
+.rainbow-bar-label {
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.85rem;
+  color: var(--pink-dark);
+  white-space: nowrap;
+  min-width: 36px;
+}
+
+.rainbow-bar-track {
+  position: relative;
   flex: 1;
-  height: 10px;
+  height: 14px;
   background: #F3E8FF;
-  border-radius: 5px;
-  overflow: hidden;
-  min-width: 70px;
+  border-radius: 7px;
+  overflow: visible;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.meter-fill {
+.rainbow-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--pink), var(--purple));
-  border-radius: 5px;
+  background: linear-gradient(90deg, #FF85A2, #FFB6C1, #FFD700, #2ECC40, #88C8F7, #D8B4FE);
+  border-radius: 7px;
   transition: width 0.5s ease;
+  z-index: 1;
 }
 
-.level-badge {
-  font-size: 0.75rem;
+.rainbow-marker {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rainbow-marker-icon {
+  font-size: 1rem;
+  line-height: 1;
+  filter: grayscale(0.6) opacity(0.5);
+  transition: filter 0.4s ease, transform 0.3s ease;
+}
+
+.rainbow-marker.reached .rainbow-marker-icon {
+  filter: none;
+  transform: scale(1.25);
+}
+
+.rainbow-marker-goal {
+  top: 50%;
+}
+
+.rainbow-marker-text {
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.6rem;
   color: var(--pink-dark);
+  position: absolute;
+  top: 100%;
+  margin-top: 2px;
+  white-space: nowrap;
 }
 
 /* ============================================================
@@ -1009,6 +1048,15 @@ body {
 .flavour-result {
   color: #D946A8;
   font-size: 1.2rem;
+}
+
+.flavour-encourage {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #7C3AED;
+  margin-top: 12px;
+  animation: fade-in 0.5s ease;
 }
 
 .flavour-grid {

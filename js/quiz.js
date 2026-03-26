@@ -409,10 +409,37 @@ function renderStats() {
   _q('#attempts-count').textContent = quizState.stats.attempts;
   _q('#brave-count').textContent = quizState.stats.brave;
   _q('#correct-count').textContent = quizState.stats.correct;
-  _q('#meter-fill').style.width = Math.min((quizState.stats.meterValue / 30) * 100, 100) + '%';
-  _q('#level-badge').textContent = 'Lv ' + quizState.stats.level;
   const skittleEl = _q('#skittle-count');
   if (skittleEl) skittleEl.textContent = quizState.stats.skittles;
+
+  // Rainbow progress bar
+  const correctInLevel = quizState.stats.correct % 20;
+  const level = quizState.stats.level;
+  const fillPct = (correctInLevel / 20) * 100;
+
+  _q('#rainbow-fill').style.width = fillPct + '%';
+  _q('#level-badge').textContent = 'Lv ' + level;
+  _q('#marker-levelup-text').textContent = 'Lv ' + (level + 1);
+
+  // Ice cream marker: fixed at 18/20 = 90%
+  _q('#marker-icecream').style.left = '90%';
+  _q('#marker-icecream').classList.toggle('reached', correctInLevel >= 18);
+
+  // Level-up marker: fixed at 100%
+  _q('#marker-levelup').style.left = '100%';
+  _q('#marker-levelup').classList.toggle('reached', correctInLevel >= 20);
+
+  // Skittle marker: how many more correct answers (+5 pts each) until 30
+  var answersToSkittle = Math.ceil((30 - quizState.stats.meterValue) / 5);
+  var skittleAt = correctInLevel + answersToSkittle;
+  var skittleMarker = _q('#marker-skittle');
+  if (skittleAt <= 20) {
+    skittleMarker.style.left = (skittleAt / 20 * 100) + '%';
+    skittleMarker.style.display = '';
+    skittleMarker.classList.toggle('reached', correctInLevel >= skittleAt);
+  } else {
+    skittleMarker.style.display = 'none';
+  }
 }
 
 function pulseStat(id) {
@@ -513,6 +540,11 @@ function submitAnswer() {
   // Mid-level philosophy beat (halfway through a level, not on level-up)
   if (quizState.stats.correct % 20 === 10 && typeof showMidLevelBeat === 'function') {
     setTimeout(() => showMidLevelBeat(quizState.stats.level), 1000);
+  }
+
+  // Ice cream flavour picker with encouragement (2 answers before level-up)
+  if (quizState.stats.correct % 20 === 18) {
+    setTimeout(() => showFlavourPicker(null, true), 1000);
   }
 
   // TODO: Remove this one-off beat for Aarani once she's seen it
@@ -798,15 +830,11 @@ function checkLevelUp() {
     }
     quizCallbacks.onLevelUp.forEach(fn => fn(level));
 
-    // Chain: overlay → flavour picker → story beat
+    // Chain: overlay → story beat (flavour picker now triggers 2 answers before level-up)
     const overlayDelay = MILESTONES[level] ? MILESTONES[level].duration + 500 : 2300;
-    setTimeout(() => {
-      showFlavourPicker(() => {
-        if (typeof showStoryBeat === 'function' && STORY_BEATS && STORY_BEATS[level]) {
-          showStoryBeat(level);
-        }
-      });
-    }, overlayDelay);
+    if (typeof showStoryBeat === 'function' && STORY_BEATS && STORY_BEATS[level]) {
+      setTimeout(() => showStoryBeat(level), overlayDelay);
+    }
   }
 }
 
@@ -915,7 +943,7 @@ const JOKE_FLAVOURS = [
   { name: 'Homework Flavour',    color: '#B0B0B0', response: '\u{1F984} Fluffy, inspired by your brilliance, has started developing a taste for Homework Flavour.' },
 ];
 
-function showFlavourPicker(onDone) {
+function showFlavourPicker(onDone, showEncouragement) {
   const overlay = document.createElement('div');
   overlay.className = 'flavour-overlay';
 
@@ -960,6 +988,13 @@ function showFlavourPicker(onDone) {
         ? f.response
         : '\u{1F984} Fluffy LOVED the ' + f.name + '!';
       heading.classList.add('flavour-result');
+
+      if (showEncouragement) {
+        const encourage = document.createElement('div');
+        encourage.className = 'flavour-encourage';
+        encourage.textContent = 'Only 2 more correct answers before you finish this level! The ice cream should carry us to the finish line!';
+        panel.appendChild(encourage);
+      }
 
       setTimeout(() => {
         overlay.style.animation = 'overlay-in 0.3s ease reverse';

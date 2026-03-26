@@ -82,14 +82,25 @@
             <span class="stat-icon">&#127852;</span>
             <span>Skittles: <span id="skittle-count">0</span></span>
           </div>
-          <div class="learning-meter-wrap">
-            <span class="stat-icon">&#9889;</span>
-            <div class="meter-track">
-              <div class="meter-fill" id="meter-fill"></div>
-            </div>
-            <span class="level-badge" id="level-badge">Lv 1</span>
-          </div>
         </section>
+
+        <!-- Rainbow progress bar -->
+        <div class="rainbow-bar-wrap">
+          <span class="rainbow-bar-label" id="level-badge">Lv 1</span>
+          <div class="rainbow-bar-track">
+            <div class="rainbow-bar-fill" id="rainbow-fill"></div>
+            <div class="rainbow-marker" id="marker-skittle" title="Next skittle">
+              <span class="rainbow-marker-icon">&#127852;</span>
+            </div>
+            <div class="rainbow-marker" id="marker-icecream" title="Ice cream at 18">
+              <span class="rainbow-marker-icon">&#127846;</span>
+            </div>
+            <div class="rainbow-marker rainbow-marker-goal" id="marker-levelup" title="Level up!">
+              <span class="rainbow-marker-icon">&#11088;</span>
+              <span class="rainbow-marker-text" id="marker-levelup-text">Lv 2</span>
+            </div>
+          </div>
+        </div>
 
         <div class="earned-items" id="earned-items" style="display:none">
           <span class="earned-item" id="earned-wand" style="display:none" title="Fairy Wand">&#129668;</span>
