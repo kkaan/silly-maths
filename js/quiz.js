@@ -894,6 +894,14 @@ const ICE_CREAM_FLAVOURS = [
   { name: 'Dulce de Leche', color: '#C8956C' },
 ];
 
+const JOKE_FLAVOURS = [
+  { name: 'Fairy Booger',        color: '#A8D86C', response: '\u{1F984} Fluffy took one sniff and ate YOUR ice cream instead.' },
+  { name: 'Gluten-Free Earwax',  color: '#C8B560', response: '\u{1F984} Fluffy looked at you with deep disappointment and stole your scoop.' },
+  { name: 'Existential Crisis',  color: '#8888AA', response: '\u{1F984} Fluffy stared into the void. The void stared back. She ate your ice cream.' },
+  { name: 'Broccoli Surprise',   color: '#6AAF50', response: '\u{1F984} Fluffy gasped, knocked it out of your hand, and replaced it with Fairy Floss.' },
+  { name: 'Homework Flavour',    color: '#B0B0B0', response: '\u{1F984} Fluffy, inspired by your brilliance, has started developing a taste for Homework Flavour.' },
+];
+
 function showFlavourPicker(onDone) {
   const overlay = document.createElement('div');
   overlay.className = 'flavour-overlay';
@@ -912,7 +920,15 @@ function showFlavourPicker(onDone) {
   const grid = document.createElement('div');
   grid.className = 'flavour-grid';
 
-  ICE_CREAM_FLAVOURS.forEach(f => {
+  // Build flavour list, sometimes with a joke option
+  const flavours = ICE_CREAM_FLAVOURS.map(f => ({ ...f, joke: false }));
+  if (Math.random() < 0.4) {
+    const joke = JOKE_FLAVOURS[Math.floor(Math.random() * JOKE_FLAVOURS.length)];
+    const slot = Math.floor(Math.random() * flavours.length);
+    flavours[slot] = { ...joke, joke: true };
+  }
+
+  flavours.forEach(f => {
     const btn = document.createElement('button');
     btn.className = 'flavour-btn';
     btn.textContent = f.name;
@@ -927,7 +943,9 @@ function showFlavourPicker(onDone) {
       grid.querySelectorAll('.flavour-btn').forEach(b => b.disabled = true);
       btn.classList.add('flavour-selected');
 
-      heading.innerHTML = '\u{1F984} Fluffy LOVED the ' + f.name + '!';
+      heading.innerHTML = f.joke
+        ? f.response
+        : '\u{1F984} Fluffy LOVED the ' + f.name + '!';
       heading.classList.add('flavour-result');
 
       setTimeout(() => {
