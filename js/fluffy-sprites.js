@@ -6,34 +6,34 @@ const FluffySprites = {
   HAPPY_SRC: 'assets/fluffy-sprite-happy-sm.png',
   GRUMPY_SRC: 'assets/fluffy-sprite-sm.png',
 
-  // Sheet dimensions (compressed)
-  HAPPY_W: 844, HAPPY_H: 460,
-  GRUMPY_W: 844, GRUMPY_H: 460,
+  // Sheet dimensions
+  HAPPY_W: 2331, HAPPY_H: 636,
+  GRUMPY_W: 1012, GRUMPY_H: 620,
 
   happyImg: null,
   grumpyImg: null,
   ready: false,
 
-  // --- Happy frames: 5 equal columns, content in top ~290px ---
+  // --- Happy frames: 5 equal columns, single row ---
   happy: {
-    standing:    { x: 0,   y: 10, w: 169, h: 280 },
-    trotting:    { x: 169, y: 10, w: 169, h: 280 },
-    jumping:     { x: 338, y: 10, w: 169, h: 280 },
-    waving:      { x: 507, y: 10, w: 169, h: 280 },
-    celebrating: { x: 676, y: 10, w: 168, h: 280 },
+    standing:    { x: 0,    y: 0, w: 466, h: 636 },
+    trotting:    { x: 466,  y: 0, w: 466, h: 636 },
+    jumping:     { x: 932,  y: 0, w: 466, h: 636 },
+    waving:      { x: 1398, y: 0, w: 466, h: 636 },
+    celebrating: { x: 1864, y: 0, w: 467, h: 636 },
   },
 
-  // --- Grumpy frames: ~7 cols (121px) × 4 rows (115px) ---
+  // --- Grumpy frames: 4 cols (253px) × 4 rows (155px) ---
   grumpy: {
     // Walking frames for idle animation cycling
     idle: [
-      { x: 121, y: 115, w: 121, h: 115 },
-      { x: 242, y: 115, w: 121, h: 115 },
-      { x: 363, y: 115, w: 121, h: 115 },
+      { x: 253, y: 155, w: 253, h: 155 },
+      { x: 506, y: 155, w: 253, h: 155 },
+      { x: 759, y: 155, w: 253, h: 155 },
     ],
-    standing: { x: 0,   y: 115, w: 121, h: 115 },
-    portrait: { x: 0,   y: 0,   w: 121, h: 115 },
-    sitting:  { x: 0,   y: 230, w: 121, h: 115 },
+    standing: { x: 0,   y: 155, w: 253, h: 155 },
+    portrait: { x: 0,   y: 0,   w: 253, h: 155 },
+    sitting:  { x: 0,   y: 310, w: 253, h: 155 },
   },
 
   // ============================================================
