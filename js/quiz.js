@@ -515,6 +515,14 @@ function submitAnswer() {
     setTimeout(() => showMidLevelBeat(quizState.stats.level), 1000);
   }
 
+  // TODO: Remove this one-off beat for Aarani once she's seen it
+  if (quizState.stats.attempts === 55 && typeof showStoryBeatFromData === 'function') {
+    setTimeout(() => showStoryBeatFromData({
+      title: 'A Fluffy Request',
+      lines: [{ char: 'fluffy', text: 'Can you grab Choopie? We need to add fluffiness.' }],
+    }), 1000);
+  }
+
   renderStats();
   checkLevelUp();
   saveStats();
