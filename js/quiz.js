@@ -547,6 +547,22 @@ function submitAnswer() {
     setTimeout(() => showFlavourPicker(null, true), 1000);
   }
 
+  // TODO: Remove Aarani's birthday beat (see GitHub issue)
+  if (quizState.stats.attempts === 59 && typeof showStoryBeatFromData === 'function') {
+    setTimeout(() => showStoryBeatFromData({
+      title: "Happy Birthday Aarani! \u{1F382}",
+      lines: [
+        { char: 'narrator', text: 'BREAKING NEWS from the Mathlandia Gazette: It is Aarani\'s 10th birthday!' },
+        { char: 'fluffy', text: 'TEN?! That\'s DOUBLE DIGITS! That\'s basically a GROWN-UP! I made you a cake, {PLAYER}!' },
+        { char: 'narrator', text: 'Fluffy presented a magnificent gluten-free birthday cake, decorated with rainbow frosting and exactly 10 candles.' },
+        { char: 'fluffy', text: 'I baked it myself! It\'s gluten-free because I ate all the gluten. Separately. As a snack.' },
+        { char: 'narrator', text: '{PLAYER} closed her eyes and made a wish. When she opened them, the cake was noticeably smaller.' },
+        { char: 'fluffy', text: 'I was just... quality testing. HAPPY BIRTHDAY! \u{1F389}' },
+        { char: 'narrator', text: 'Fluffy had eaten seven of the ten slices. She showed no remorse. She never does.' },
+      ],
+    }), 1000);
+  }
+
   // TODO: Remove this one-off beat for Aarani once she's seen it
   if (quizState.stats.attempts === 55 && typeof showStoryBeatFromData === 'function') {
     setTimeout(() => showStoryBeatFromData({
