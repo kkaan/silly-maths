@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=16">
+  <link rel="stylesheet" href="css/styles.css?v=17">
 </head>
 <body>
 
@@ -84,11 +84,12 @@
           </div>
         </section>
 
-        <!-- Rainbow progress bar -->
+        <!-- Rainbow progress bar with Fluffy -->
         <div class="rainbow-bar-wrap">
           <span class="rainbow-bar-label" id="level-badge">Lv 1</span>
           <div class="rainbow-bar-track">
             <div class="rainbow-bar-fill" id="rainbow-fill"></div>
+            <canvas class="rainbow-bar-fluffy" id="unicorn-canvas"></canvas>
             <div class="rainbow-marker" id="marker-skittle" title="Next skittle">
               <span class="rainbow-marker-icon">&#127852;</span>
             </div>
@@ -139,11 +140,6 @@
         <p class="intro-hint" id="intro-hint">Type your answer and press Enter!</p>
       </div>
 
-      <!-- Right column: Unicorn Canvas -->
-      <div class="game-sidebar">
-        <canvas id="unicorn-canvas"></canvas>
-      </div>
-
     </div>
   </section>
 
@@ -152,11 +148,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 
   <!-- Scripts (order matters) -->
-  <script src="js/firebase-sync.js?v=16"></script>
-  <script src="js/story.js?v=16"></script>
-  <script src="js/quiz.js?v=16"></script>
-  <script src="js/unicorn.js?v=16"></script>
-  <script src="js/parallax.js?v=16"></script>
-  <script src="js/app.js?v=16"></script>
+  <script src="js/firebase-sync.js?v=17"></script>
+  <script src="js/story.js?v=17"></script>
+  <script src="js/quiz.js?v=17"></script>
+  <script src="js/unicorn.js?v=17"></script>
+  <script src="js/parallax.js?v=17"></script>
+  <script src="js/app.js?v=17"></script>
 </body>
 </html>
