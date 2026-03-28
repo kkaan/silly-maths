@@ -537,9 +537,19 @@ function submitAnswer() {
     quizCallbacks.onSkittle.forEach(fn => fn(quizState.stats.skittles));
   }
 
+  // Drumpf encounter (early in each level)
+  if (quizState.stats.correct % 20 === 5 && typeof showDrumpfBeat === 'function') {
+    setTimeout(() => showDrumpfBeat(quizState.stats.level), 1000);
+  }
+
   // Mid-level philosophy beat (halfway through a level, not on level-up)
   if (quizState.stats.correct % 20 === 10 && typeof showMidLevelBeat === 'function') {
     setTimeout(() => showMidLevelBeat(quizState.stats.level), 1000);
+  }
+
+  // Life & lore beat (three-quarters through a level)
+  if (quizState.stats.correct % 20 === 15 && typeof showLifeBeat === 'function') {
+    setTimeout(() => showLifeBeat(quizState.stats.level), 1000);
   }
 
   // Ice cream flavour picker with encouragement (2 answers before level-up)

@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize quiz (loads stats from Firebase), then preload sprites
     initQuiz().then(() => {
-      return FluffySprites.preload();
+      return Promise.all([FluffySprites.preload(), DrumpfSprites.preload(), CharacterSprites.preload()]);
     }).then(() => {
       // Initialize unicorn canvas
       const canvas = document.getElementById('unicorn-canvas');

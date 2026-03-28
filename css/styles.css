@@ -1159,6 +1159,41 @@ body {
   font-weight: 700;
 }
 
+.story-drumpf {
+  color: #6B3FA0;
+  font-weight: 700;
+}
+
+.story-sage {
+  color: #4A6A8A;
+  font-weight: 700;
+}
+
+.story-archie {
+  color: #8B6914;
+  font-weight: 700;
+}
+
+.story-buzz {
+  color: #DAA520;
+  font-weight: 700;
+}
+
+.story-nimbus {
+  color: #6A9BD2;
+  font-weight: 700;
+}
+
+.story-melody {
+  color: #C77DFF;
+  font-weight: 700;
+}
+
+.story-nightingale {
+  color: #D4AF37;
+  font-weight: 700;
+}
+
 .story-char-name {
   font-weight: 800;
   font-size: 0.85rem;
@@ -1166,13 +1201,20 @@ body {
   margin-bottom: 2px;
 }
 
-.story-fluffy .story-char-name {
+.story-fluffy .story-char-name,
+.story-drumpf .story-char-name,
+.story-sage .story-char-name,
+.story-archie .story-char-name,
+.story-buzz .story-char-name,
+.story-nimbus .story-char-name,
+.story-melody .story-char-name,
+.story-nightingale .story-char-name {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.story-fluffy-portrait {
+.story-char-portrait {
   flex-shrink: 0;
   border-radius: 50%;
 }
