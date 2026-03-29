@@ -175,6 +175,12 @@ const MID_LEVEL_BEATS = {
     { char: 'fluffy', text: '{PLAYER}, if I eat zero skittles\u2026 did I still eat? Like, is zero a real number or is it just\u2026 nothing pretending to be something?' },
     { char: 'narrator', text: 'This was the first sign that Fluffy was not an ordinary unicorn.' },
   ]},
+  3: { title: 'The Librarian', lines: [
+    { char: 'narrator', text: '{PLAYER} noticed a tall tower of crystal and old oak at the edge of the square. A sign read: "Sparkle Town Library \u2014 All Are Welcome."' },
+    { char: 'sage', text: 'Ah! A visitor! I am Sage, the Royal Librarian. Come in, come in! I have catalogued every book in this library. Every book has its number, and every number has its place.' },
+    { char: 'fluffy', text: 'Sage has been here for TWO HUNDRED YEARS. She knows EVERYTHING. Except how to make skittles. Nobody\'s perfect.' },
+    { char: 'sage', text: 'Welcome to Mathlandia, {PLAYER}. If you ever need answers, you\'ll find them here. Knowledge is free. Unlike skittles.' },
+  ]},
   4: { title: 'Fluffy Discovers Infinity', lines: [
     { char: 'fluffy', text: 'If I could eat infinite skittles, would I ever feel full? Or would I just be infinitely hungry AND infinitely eating? {PLAYER}, I\'m scared.' },
     { char: 'narrator', text: '{PLAYER} wisely chose not to answer.' },
@@ -515,13 +521,13 @@ const LIFE_BEATS = {
     ],
   },
   3: {
-    title: 'The Library',
+    title: 'Inside the Library',
     lines: [
-      { char: 'narrator', text: '{PLAYER} discovered the Sparkle Town Library, a tower of crystal and old oak that reached higher than it should have been able to.' },
-      { char: 'sage', text: 'Welcome, young one! I am Sage, the Royal Librarian. I have catalogued every book in this library using the Dewey Decimal System. Every book has its number, and every number has its place.' },
-      { char: 'fluffy', text: 'Sage has been here for TWO HUNDRED YEARS. She\'s read every book. Even the boring ones about soil.' },
-      { char: 'sage', text: 'There are no boring books, Fluffy. Only unfinished curiosity. Now \u2014 {PLAYER}, was it? You\'re welcome here anytime. Knowledge is free. Unlike skittles.' },
-      { char: 'fluffy', text: '\u2026Why does everyone keep making that distinction?' },
+      { char: 'narrator', text: 'Sage led {PLAYER} deeper into the library. The shelves spiralled upward like a nautilus shell, each level holding older and more mysterious books.' },
+      { char: 'sage', text: 'This floor is measurements. That floor is shapes. Up there is the History of Numbers \u2014 did you know that zero was invented? Someone had to IMAGINE nothing and give it a symbol.' },
+      { char: 'fluffy', text: 'There\'s a whole SECTION on Mathlandia! Sage, tell {PLAYER} about the kingdom!' },
+      { char: 'sage', text: 'Mathlandia was founded by the Mathamagicians \u2014 an ancient order who could bend reality with logic. Every road, every bridge, every building was calculated to be exactly right. Maths isn\'t decoration here, {PLAYER}. It\'s the foundation of everything.' },
+      { char: 'sage', text: 'And now that the Royal Mathematician has retired\u2026 well. That\'s why we need you.' },
     ],
   },
   5: {
